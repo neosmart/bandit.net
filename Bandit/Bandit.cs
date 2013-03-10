@@ -53,7 +53,10 @@ namespace NeoSmart.Bandit
             int index = _gambler.Play(1);
             _gambler.Observe(index, 0);
 
-            return Choices[IndexIndexer[index]];
+            var next = Choices[IndexIndexer[index]];
+            next.Displayed();
+            
+            return next;
         }
 
         public bool Save(string path)
