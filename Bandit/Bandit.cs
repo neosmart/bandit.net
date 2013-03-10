@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using Bandit.Stochastic;
 
 namespace NeoSmart.Bandit
 {
@@ -12,16 +13,28 @@ namespace NeoSmart.Bandit
     public class Bandit<T>
     {
         public readonly Dictionary<string, Choice<T>> Choices = new Dictionary<string,Choice<T>>();
+        public readonly Dictionary<int, string> IndexIndexer = new Dictionary<int, string>();
+        private int _lastIndex = 0;
 
-        public Choice<T> AddChoice(T choice, double initialConfidence, long multiplier)
+        private readonly EpsilonDecreasingGambler _gambler;
+
+        public Bandit()
+        {
+            _gambler = new EpsilonDecreasingGambler(100);
+        }
+
+        public Choice<T> AddChoice(T choice)
         {
             lock (Choices)
             {
-                var temp = new Choice<T>(choice);
+                var temp = new Choice<T>(choice, _gambler, _lastIndex);
+                IndexIndexer.Add(_lastIndex++, temp.Guid);
                 Choices.Add(temp.Guid, temp);
+                _gambler.LeverCount = _lastIndex;
+                _gambler.Reset();
 
-                temp.Tally.Success = (int) (multiplier*initialConfidence);
-                temp.Tally.Total = multiplier;
+                temp.Tally.Success = 0;
+                temp.Tally.Total = 0;
 
                 return temp;
             }
@@ -37,10 +50,10 @@ namespace NeoSmart.Bandit
 
         public Choice<T> GetNext()
         {
-            var best = Choices.Values.Aggregate((agg, next) => next.Ratio > agg.Ratio ? next : agg);
-            best.Displayed();
+            int index = _gambler.Play(1);
+            _gambler.Observe(index, 0);
 
-            return best;
+            return Choices[IndexIndexer[index]];
         }
 
         public bool Save(string path)
@@ -66,7 +79,7 @@ namespace NeoSmart.Bandit
 
         static public Bandit<T> Load(string path)
         {
-            if (!File.Exists(path))
+            //if (!File.Exists(path))
                 return new Bandit<T>();
 
             using (Stream stream = File.OpenRead(path))

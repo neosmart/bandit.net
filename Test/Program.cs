@@ -20,8 +20,8 @@ namespace Test
             b.Save("output.bin");
             b = Bandit<string>.Load("output.bin");
 
-            var choice1 = b.AddChoice("hello", 0.5, 1000);
-            var choice2 = b.AddChoice("hi", 0.5, 1000);
+            var choice1 = b.AddChoice("hello");
+            var choice2 = b.AddChoice("hi");
 
             for (int i = 0; i < 6; ++i)
             {
