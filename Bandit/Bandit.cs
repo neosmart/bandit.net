@@ -16,11 +16,11 @@ namespace NeoSmart.Bandit
         public readonly Dictionary<int, string> IndexIndexer = new Dictionary<int, string>();
         private int _lastIndex = 0;
 
-        private readonly EpsilonDecreasingGambler _gambler;
+        private readonly EpsilonGreedyGambler _gambler;
 
         public Bandit()
         {
-            _gambler = new EpsilonDecreasingGambler(100);
+            _gambler = new EpsilonGreedyGambler(0.3);
         }
 
         public Choice<T> AddChoice(T choice)
