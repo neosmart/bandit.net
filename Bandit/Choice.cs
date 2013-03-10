@@ -35,10 +35,12 @@ namespace NeoSmart.Bandit
 
         public double Ratio
         {
-            get
-            {
-                return ((Double) Tally.Success/Tally.Total);
-            }
+            get { return ((Double) Tally.Success/Tally.Total); }
+        }
+
+        public string ValueString
+        {
+            get { return Value.ToString(); }
         }
 
         public Choice(T t, GamblerBase gambler, int index)
