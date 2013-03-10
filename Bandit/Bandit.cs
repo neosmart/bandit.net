@@ -13,12 +13,15 @@ namespace NeoSmart.Bandit
     {
         public readonly Dictionary<string, Choice<T>> Choices = new Dictionary<string,Choice<T>>();
 
-        public Choice<T> AddChoice(T choice)
+        public Choice<T> AddChoice(T choice, double initialConfidence, long multiplier)
         {
             lock (Choices)
             {
                 var temp = new Choice<T>(choice);
                 Choices.Add(temp.Guid, temp);
+
+                temp.Tally.Success = (int) (multiplier*initialConfidence);
+                temp.Tally.Total = multiplier;
 
                 return temp;
             }

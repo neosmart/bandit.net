@@ -8,7 +8,7 @@ namespace NeoSmart.Bandit
     [Serializable]
     class Tally
     {
-        public long Success = 1;
-        public long Total = 1;
+        public long Success = 100;
+        public long Total = 100;
     }
 }

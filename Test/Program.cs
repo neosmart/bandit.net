@@ -13,16 +13,30 @@ namespace Test
         {
             //var buttonBandit = Bandit<string>.Load("c:/users/mahmoud/desktop/buttonbandit.bin");
 
+            var _lastSave = DateTime.MinValue;
+
 
             var b = Bandit<string>.Load("output.bin");
             b.Save("output.bin");
             b = Bandit<string>.Load("output.bin");
 
-            var choice1 = b.AddChoice("hello");
-            var choice2 = b.AddChoice("hi");
+            var choice1 = b.AddChoice("hello", 0.5, 1000);
+            var choice2 = b.AddChoice("hi", 0.5, 1000);
 
             for (int i = 0; i < 6; ++i)
             {
+                if (DateTime.UtcNow > (_lastSave + new TimeSpan(0, 0, 0, 5)))
+                {
+                    lock (b)
+                    {
+                        if (DateTime.UtcNow > (_lastSave + new TimeSpan(0, 0, 0, 5)))
+                        {
+                            b.Save("output.bin");
+                            _lastSave = DateTime.UtcNow;
+                        }
+                    }
+                }
+
                 var shown = b.GetNext();
                 Console.WriteLine("Result: " + shown.Value);
 
