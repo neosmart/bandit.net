@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bandit">
-      <HintPath>..\..\..\Libraries\bandit\bin\Debug\Bandit.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +44,12 @@
     <Compile Include="Choice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tally.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\bandit\BanditCore.csproj">
+      <Project>{a4f22c9e-ee78-40e9-b2ca-b7039fbc1287}</Project>
+      <Name>BanditCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

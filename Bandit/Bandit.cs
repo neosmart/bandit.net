@@ -5,36 +5,52 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
-using Bandit.Stochastic;
+using BanditCore.Stochastic;
 
 namespace NeoSmart.Bandit
 {
     [Serializable]
     public class Bandit<T>
     {
-        public readonly Dictionary<string, Choice<T>> Choices = new Dictionary<string,Choice<T>>();
-        public readonly Dictionary<int, string> IndexIndexer = new Dictionary<int, string>();
-        private int _lastIndex = 0;
+        public string Name { get; set; }
+        public readonly List<Choice<T>> Choices = new List<Choice<T>>();
 
-        private readonly EpsilonGreedyGambler _gambler;
+        private readonly GamblerBase _gambler = null;
 
-        public Bandit()
+        public Bandit(string name = null)
         {
-            _gambler = new EpsilonGreedyGambler(0.3);
+            Name = name ?? Guid.NewGuid().ToString();
+
+            //Choose the winner with a probability of (1-epsilon) 
+            //otherwise, randomly select between choices
+            //_gambler = new EpsilonGreedyGambler(0.70);
+            _gambler = new PureLuckGambler();
+        }
+
+        public void ResetStats()
+        {
+            _gambler.Reset();
+
+            lock (Choices)
+            {
+                foreach (var choice in Choices)
+                {
+                    choice.Reset();
+                }
+            }
         }
 
         public Choice<T> AddChoice(T choice)
         {
             lock (Choices)
             {
-                var temp = new Choice<T>(choice, _gambler, _lastIndex);
-                IndexIndexer.Add(_lastIndex++, temp.Guid);
-                Choices.Add(temp.Guid, temp);
-                _gambler.LeverCount = _lastIndex;
+                var temp = new Choice<T>(choice, _gambler, Choices.Count);
+                Choices.Add(temp);
+                _gambler.LeverCount = Choices.Count;
                 _gambler.Reset();
 
-                temp.Tally.Success = 0;
                 temp.Tally.Total = 0;
+                temp.Tally.Success = 0;
 
                 return temp;
             }
@@ -44,7 +60,7 @@ namespace NeoSmart.Bandit
         {
             lock (Choices)
             {
-                Choices.Remove(choice.Guid);
+                Choices.RemoveAll(choice1 => choice1.Guid == choice.Guid);
             }
         }
 
@@ -53,7 +69,7 @@ namespace NeoSmart.Bandit
             int index = _gambler.Play(1);
             _gambler.Observe(index, 0);
 
-            var next = Choices[IndexIndexer[index]];
+            var next = Choices[index];
             next.Displayed();
             
             return next;
@@ -82,7 +98,7 @@ namespace NeoSmart.Bandit
 
         static public Bandit<T> Load(string path)
         {
-            //if (!File.Exists(path))
+            if (!File.Exists(path))
                 return new Bandit<T>();
 
             using (Stream stream = File.OpenRead(path))

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Bandit.Stochastic;
+using BanditCore.Stochastic;
 
 namespace NeoSmart.Bandit
 {
@@ -13,7 +13,7 @@ namespace NeoSmart.Bandit
         public readonly T Value;
         internal Tally Tally = new Tally();
 
-        public readonly string Guid;
+        public string Guid { get; private set; }
 
         private readonly int _gamblerIndex;
         private readonly GamblerBase _gambler;
@@ -51,6 +51,13 @@ namespace NeoSmart.Bandit
             _gambler = gambler;
         }
 
+        public void Reset()
+        {
+            System.Threading.Interlocked.Exchange(ref Tally.Total, 0);
+            System.Threading.Interlocked.Exchange(ref Tally.Success, 0);
+            Guid = System.Guid.NewGuid().ToString();
+        }
+
         public void Displayed()
         {
             System.Threading.Interlocked.Increment(ref Tally.Total);
@@ -67,6 +74,11 @@ namespace NeoSmart.Bandit
             {
                 _gambler.Observe(_gamblerIndex, 2);
             }
+        }
+
+        public bool Equals(Choice<T> choice2)
+        {
+            return Guid == choice2.Guid;
         }
     }
 }
