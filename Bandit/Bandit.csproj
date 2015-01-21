@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Bandit.cs" />
     <Compile Include="Choice.cs" />
+    <Compile Include="GraphPad.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tally.cs" />
   </ItemGroup>

@@ -27,6 +27,17 @@ namespace NeoSmart.Bandit
             _gambler = new PureLuckGambler();
         }
 
+        public decimal P
+        {
+            get
+            {
+                lock (Choices)
+                {
+                    return GraphPad.ChiSquare(new BinaryResult(Choices[0].Success, Choices[0].Total - Choices[0].Success), new BinaryResult(Choices[1].Success, Choices[1].Total - Choices[1].Success));
+                }
+            }
+        }
+
         public void ResetStats()
         {
             _gambler.Reset();
