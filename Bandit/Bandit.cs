@@ -16,6 +16,7 @@ namespace NeoSmart.Bandit
         public readonly List<Choice<T>> Choices = new List<Choice<T>>();
 
         private readonly GamblerBase _gambler = null;
+        public DateTime ExperimentStart { get; private set; }
 
         public Bandit(string name = null)
         {
@@ -33,7 +34,9 @@ namespace NeoSmart.Bandit
             {
                 lock (Choices)
                 {
-                    return GraphPad.ChiSquare(new BinaryResult(Choices[0].Success, Choices[0].Total - Choices[0].Success), new BinaryResult(Choices[1].Success, Choices[1].Total - Choices[1].Success));
+                    return
+                        GraphPad.ChiSquare(new BinaryResult(Choices[0].Success, Choices[0].Total - Choices[0].Success),
+                            new BinaryResult(Choices[1].Success, Choices[1].Total - Choices[1].Success));
                 }
             }
         }
@@ -48,23 +51,25 @@ namespace NeoSmart.Bandit
                 {
                     choice.Reset();
                 }
+                ExperimentStart = DateTime.UtcNow;
             }
         }
 
         public Choice<T> AddChoice(T choice)
         {
+            var temp = new Choice<T>(choice, _gambler, Choices.Count);
             lock (Choices)
             {
-                var temp = new Choice<T>(choice, _gambler, Choices.Count);
                 Choices.Add(temp);
                 _gambler.LeverCount = Choices.Count;
-                _gambler.Reset();
 
                 temp.Tally.Total = 0;
                 temp.Tally.Success = 0;
-
-                return temp;
             }
+
+            ResetStats();
+
+            return temp;
         }
 
         public void RemoveChoice(Choice<T> choice)
@@ -73,6 +78,7 @@ namespace NeoSmart.Bandit
             {
                 Choices.RemoveAll(choice1 => choice1.Guid == choice.Guid);
             }
+            ResetStats();
         }
 
         public Choice<T> GetNext()
@@ -82,7 +88,7 @@ namespace NeoSmart.Bandit
 
             var next = Choices[index];
             next.Displayed();
-            
+
             return next;
         }
 
@@ -103,11 +109,11 @@ namespace NeoSmart.Bandit
                 Console.WriteLine(ex);
                 return false;
             }
-            
+
             return true;
         }
 
-        static public Bandit<T> Load(string path)
+        public static Bandit<T> Load(string path)
         {
             if (!File.Exists(path))
                 return new Bandit<T>();
@@ -117,6 +123,16 @@ namespace NeoSmart.Bandit
                 var bandit = (Bandit<T>) new BinaryFormatter().Deserialize(stream);
                 return bandit;
             }
+        }
+
+        public override int GetHashCode()
+        {
+            int result = 33;// ^ Name.GetHashCode();
+            foreach (var choice in Choices)
+            {
+                result ^= choice.Value.GetHashCode();
+            }
+            return result;
         }
     }
 }
