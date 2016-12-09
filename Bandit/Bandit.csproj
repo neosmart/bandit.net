@@ -47,7 +47,7 @@
     <Compile Include="Tally.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\bandit\BanditCore.csproj">
+    <ProjectReference Include="..\bandit-core\BanditCore.csproj">
       <Project>{a4f22c9e-ee78-40e9-b2ca-b7039fbc1287}</Project>
       <Name>BanditCore</Name>
     </ProjectReference>

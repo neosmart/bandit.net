@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.25920.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bandit", "Bandit\Bandit.csproj", "{53391285-8B8D-4F7E-BE57-756024802577}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A4F22C9E-EE78-40E9-B2CA-B7039FBC1287} = {A4F22C9E-EE78-40E9-B2CA-B7039FBC1287}
@@ -8,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bandit", "Bandit\Bandit.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{5010E3E2-EB56-49D8-8736-582BC3B5D72D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanditCore", "..\..\Libraries\bandit\BanditCore.csproj", "{A4F22C9E-EE78-40E9-B2CA-B7039FBC1287}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BanditCore", "bandit-core\BanditCore.csproj", "{A4F22C9E-EE78-40E9-B2CA-B7039FBC1287}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
