@@ -134,10 +134,7 @@ namespace BanditCore.Stochastic
 
 		private double Price(double mean, double sigma, int count)
 		{
-			InvCumulativeNormalDistribution icdf =
-				new InvCumulativeNormalDistribution(mean, sigma / Math.Sqrt(Math.Max(count, 1)));
-
-			return icdf.ValueOf(1 - alpha);
+		    return Normal.InvCDF(mean, sigma / Math.Sqrt(Math.Max(count, 1)), 1 - alpha);
 		}
 	}
 }

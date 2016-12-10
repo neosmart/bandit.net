@@ -109,10 +109,7 @@ namespace BanditCore.Stochastic
 //						Gaussian(mean, maxMean + delta, sigma / Math.Sqrt(observationCounts[i]))
 //						/ Gaussian(mean, mean, sigma / Math.Sqrt(observationCounts[i]));
 
-					CumulativeNormalDistribution cnd = new CumulativeNormalDistribution(
-						mean, sigma / Math.Sqrt(observationCounts[i]));
-
-					double proba = (1 - cnd.ValueOf(maxMean + delta));
+				    var proba = Normal.CDF(mean, sigma / Math.Sqrt(observationCounts[i]), maxMean + delta);
 					
 					// price = empirical mean + estimated long term gain
 					double price = mean + horizon * delta * proba;

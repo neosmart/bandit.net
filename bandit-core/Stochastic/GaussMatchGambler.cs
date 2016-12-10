@@ -21,8 +21,8 @@
 
 #endregion
 
-using System;
-using MathNet.Numerics.Generators;
+using System; 
+using MathNet.Numerics.Distributions;
 
 namespace BanditCore.Stochastic
 {
@@ -44,7 +44,7 @@ namespace BanditCore.Stochastic
 		/// <summary>Index of the last pulled lever.</summary>
 		private int lastPulledLever = 0;
 
-		private NormalGenerator generator = new NormalGenerator();
+	    private Normal generator = new Normal();
 
 		/// <summary>Creates a new <i>interval draw</i> gambler.</summary>
 		public GaussMatchGambler(double skew)
@@ -82,10 +82,9 @@ namespace BanditCore.Stochastic
 				else sigma = leverSigmaSum / twiceObservedLeverCount;
 
 				// recycling the normal generator instead of creating a new one each time
-				generator.Mean = mean;
-				generator.Sigma = sigma * skew // notice the "skew" factor
-					/ Math.Sqrt(Math.Max(observationCounts[i], 1)); 
-				double deviate = generator.Next();
+			    generator = new Normal(mean, sigma * skew // notice the "skew" factor
+			                                 / Math.Sqrt(Math.Max(observationCounts[i], 1)));
+				double deviate = generator.Sample();
 
 				if(deviate > maxDeviate)
 				{

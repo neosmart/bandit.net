@@ -22,7 +22,7 @@
 #endregion
 
 using System;
-using MathNet.Numerics.Generators;
+using MathNet.Numerics.Distributions;
 
 namespace BanditCore.Stochastic
 {
@@ -54,7 +54,19 @@ namespace BanditCore.Stochastic
 					/ ((double) Math.Max(observationCounts[i], 1) * temperature));
 			}
 
-			return (new DiscreteGenerator(weights)).Next();
+			//return Discrete (new DiscreteGenerator(weights)).Next();
+
+		    while (true)
+		    {
+		        for (var i = 0; i < LeverCount; ++i)
+		        {
+                    var rand = Normal.Sample(50, Math.Sqrt(Math.Pow(100, 2) / 12));
+                    if (rand < weights[i] * 100)
+		            {
+		                return i;
+		            }
+		        }
+		    }
 		}
 	}
 }
